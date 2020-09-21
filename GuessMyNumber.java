@@ -1,4 +1,5 @@
 package edu.lewisu.cs.klumpra.textgames;
+// This implements a guess my number game.
 import java.util.Random;
 import java.util.Scanner;
 public class GuessMyNumber {
