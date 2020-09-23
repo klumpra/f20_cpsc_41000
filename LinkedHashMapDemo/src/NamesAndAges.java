@@ -13,8 +13,6 @@ public class NamesAndAges {
 		} else {
 			System.out.println("not found");
 		}
-		LinkedHashMap<String,Room> neighbors;
-		neighbors.put("N",someRoom);
 	}
 	
 }
