@@ -1,0 +1,11 @@
+Kitchen	Where culinary delights are made	null	Kitchenette	Dining Room	null
+Dining Room	Where people eat when royalty is over	null	Hallway	Living Room	Kitchen
+Living Room	Where the dog suns himself	null	Entrance	null	Dining Room
+Patio	Where people get bitten by mosquitos	null	null	Kitchenette	null
+Kitchenette	Where people eat breakfast	Kitchen	Family Room	Hallway	Patio
+Hallway	Just passing through	Dining Room	Laundry Room	Entrance	Kitchenette
+Entrance	Where people enter our humble abode	Living Room	null	null	Hallway
+Family Room	Where people watch Breaking Bad	Kitchenette	null	Laundry Room	null
+Laundry Room	Where people wash the bugs from their clothes	Hallway	Garage	null	Family Room
+Garage	Where people park their horseless trolleys	Laundry Room	null	null	null
+

@@ -1,0 +1,15 @@
+K1	Kitchen	Where culinary delights are made	
+K2	Kitchenette	Where people eat breakfast	
+FR	Family Room	Where people watch Breaking Bad	
+P	Patio	Where people get bitten by mosquitos	
+DR	Dining Room	Where people eat when royalty is over	
+HW	Hallway	Just passing through	
+LA	Laundry Room	Where people wash the bugs from their clothes	
+G	Garage	Where people park their horseless trolleys	
+LR	Living Room	Where the dog suns himself	
+E	Entrance	Where people enter our humble abode	
+MAPDEF	4	4	
+	K1	DR	LR
+P	K2	HW	E
+	FR	LA	
+		G	
