@@ -35,6 +35,7 @@ public class Room {
 		Room otherRoom = (Room)other;
 		return name.equalsIgnoreCase(otherRoom.getName());
 	}
+	//returns true if this room's name matches the other room's name
 	public boolean matchByName(String otherName) {
 		return name.equalsIgnoreCase(otherName);
 	}
