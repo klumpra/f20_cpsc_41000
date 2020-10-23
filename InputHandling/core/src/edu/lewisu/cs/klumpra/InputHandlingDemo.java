@@ -48,6 +48,19 @@ public class InputHandlingDemo extends ApplicationAdapter {
         cam.update();
         batch.setProjectionMatrix(cam.combined);
     }
+    public void wrapCoordinates() {
+        if (imgX > WIDTH) {
+            imgX = imgX-WIDTH;
+        } else if (imgX < -imgWidth) {
+            imgX=WIDTH;
+        }
+        if (imgY > HEIGHT) {
+            imgY = imgY - HEIGHT - imgHeight;
+        } else if (imgY < -imgHeight) {
+            imgY = HEIGHT;
+        }
+    }
+
     /**
      * handles all keyboard and mouse input.
      * It is called from render.
@@ -106,20 +119,20 @@ public class InputHandlingDemo extends ApplicationAdapter {
         if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
             Gdx.app.exit();   // quit the game
         }
-        if (Gdx.input.isKeyJustPressed(Keys.W)) {
+        if (Gdx.input.isKeyPressed(Keys.W)) {
             imgY += 5;
         }
-        if (Gdx.input.isKeyJustPressed(Keys.S)) {
+        if (Gdx.input.isKeyPressed(Keys.S)) {
             imgY -= 5;
         }
-        if (Gdx.input.isKeyJustPressed(Keys.A)) {
+        if (Gdx.input.isKeyPressed(Keys.A)) {
             if (shiftHeld) {
                 imgAngle += 2;
             } else {
                 imgX -= 5;
             }
         }
-        if (Gdx.input.isKeyJustPressed(Keys.D)) {
+        if (Gdx.input.isKeyPressed(Keys.D)) {
             if (shiftHeld) {
                 imgAngle -= 2;
             } else {
