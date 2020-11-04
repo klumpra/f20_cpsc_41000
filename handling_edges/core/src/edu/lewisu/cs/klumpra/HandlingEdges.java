@@ -5,8 +5,13 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 
 public class HandlingEdges extends ApplicationAdapter {
     SpriteBatch batch;
@@ -17,6 +22,15 @@ public class HandlingEdges extends ApplicationAdapter {
     float WIDTH, HEIGHT;
     OrthographicCamera cam;
     float WORLDWIDTH, WORLDHEIGHT;
+    LabelStyle labelStyle;
+    Label label;
+    Sound bulb;   // sound effect of a lightbulb burstin
+    Music wind;   // backing track - wind blowing constantly
+
+    public void setupLabelStyle() {
+        labelStyle = new LabelStyle();
+        labelStyle.font = new BitmapFont(Gdx.files.internal("fonts/myfont20201030.fnt"));
+    }
     @Override
     public void create () {
         batch = new SpriteBatch();
@@ -35,6 +49,15 @@ public class HandlingEdges extends ApplicationAdapter {
         cam.update();
         batch.setProjectionMatrix(cam.combined);
         System.out.println(cam.position.x + " " + cam.position.y);
+        setupLabelStyle();
+        // now create the label
+        label = new Label("Welcome!", labelStyle);
+        label.setPosition(20,400);  // world coordinates == screen coordinates at the beginning
+        bulb = Gdx.audio.newSound(Gdx.files.internal("audio/bulb.mp3"));
+        wind = Gdx.audio.newMusic(Gdx.files.internal("audio/wind.wav"));
+        wind.setLooping(true);
+        wind.setVolume(0.5f);
+        wind.play();
     }
 
     public void handleInput() {
@@ -49,6 +72,9 @@ public class HandlingEdges extends ApplicationAdapter {
         }
         if (Gdx.input.isKeyPressed(Keys.S)) {
             imgY-=10; 
+        }
+        if (Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+            bulb.play();
         }
 	}
 	public Vector2 getViewPortOrigin() {
@@ -131,9 +157,14 @@ public class HandlingEdges extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         handleInput();
         panCoordinates(20);
+        label.setText("X = " + imgX + ", Y = " + imgY);
+        // update the label position to ensure that it stays at the same place on 
+        // the screen as the camera moves.
+        label.setPosition(20+(cam.position.x-WIDTH/2),400+cam.position.y-HEIGHT/2);
         batch.begin();
         batch.draw(background,0,0);
         batch.draw(img, imgX, imgY);
+        label.draw(batch,1);
         batch.end();
     }
     
@@ -141,6 +172,8 @@ public class HandlingEdges extends ApplicationAdapter {
     public void dispose () {
         batch.dispose();
         img.dispose();
+        wind.dispose();
+        bulb.dispose();
     }
 }
 
