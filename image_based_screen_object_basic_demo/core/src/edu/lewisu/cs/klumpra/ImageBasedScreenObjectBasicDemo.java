@@ -9,11 +9,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 class InputHandler extends InputAdapter {
-    private ImageBasedScreenObject obj;
+    private ImageBasedScreenObject obj;   // the actor we will control
     private boolean shiftHeld = false;
     public InputHandler(ImageBasedScreenObject obj) {
         this.obj = obj;
     }
+    @Override
     public boolean keyDown(int keyCode) {
         if (keyCode == Keys.SHIFT_LEFT || keyCode == Keys.SHIFT_RIGHT) {
             shiftHeld = true;
@@ -23,7 +24,7 @@ class InputHandler extends InputAdapter {
                 obj.rotate(-5);
             } else {
                 obj.move(-5,0);
-            }   
+            }
         }
         if (keyCode == Keys.D) {
             if (shiftHeld) {
@@ -34,16 +35,23 @@ class InputHandler extends InputAdapter {
         }
         if (keyCode == Keys.W) {
             if (shiftHeld) {
-                obj.scale(1.1f,1.1f);
+                obj.scale(1.1f, 1.1f);
             } else {
                 obj.move(0,5);
-            }   
+            }
         }
         if (keyCode == Keys.S) {
             if (shiftHeld) {
                 obj.scale(0.9f,0.9f);
             } else {
                 obj.move(0,-5);
+            }
+        }
+        if (keyCode == Keys.SPACE) {
+            if (shiftHeld) {
+                obj.flipX();
+            } else {
+                obj.flipY();
             }
         }
         return true;
@@ -60,17 +68,17 @@ class InputHandler extends InputAdapter {
 public class ImageBasedScreenObjectBasicDemo extends ApplicationAdapter {
 	SpriteBatch batch;
 	ImageBasedScreenObject obj;
-	ImageBasedScreenObjectDrawer artist;
-	InputHandler handler;
-	
+    ImageBasedScreenObjectDrawer artist;
+    InputHandler handler;
+    
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		Texture img = new Texture("badlogic.jpg");
-		obj = new ImageBasedScreenObject(img);
-		artist = new ImageBasedScreenObjectDrawer(batch);
-		handler = new InputHandler(obj);
-		Gdx.input.setInputProcessor(handler);
+        obj = new ImageBasedScreenObject(img,0,0,true);
+        artist = new ImageBasedScreenObjectDrawer(batch);
+        handler = new InputHandler(obj);
+        Gdx.input.setInputProcessor(handler);
 	}
 
 	@Override
@@ -78,7 +86,7 @@ public class ImageBasedScreenObjectBasicDemo extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
-		artist.draw(obj);
+        artist.draw(obj);
 		batch.end();
 	}
 	

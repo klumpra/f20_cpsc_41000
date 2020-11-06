@@ -1,8 +1,13 @@
 package edu.lewisu.cs.klumpra;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Intersector.MinimumTranslationVector;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Vector2;
 
-class ImageBasedScreenObject {
+public class ImageBasedScreenObject {
     protected Texture img;
     protected float xpos;
     protected float ypos;
@@ -15,29 +20,17 @@ class ImageBasedScreenObject {
     protected float scaleY;
     protected boolean flipX;
     protected boolean flipY;
+    protected Vector2 velocityVec;
+    protected Vector2 accelerationVec;
+    protected float acceleration;
+    protected float maxSpeed;
+    protected float deceleration;
+
     public ImageBasedScreenObject(Texture tex) {
         this(tex,0,0,0,0,0,1,1,false,false);
     }
-    public void centerOriginGeometrically() {
-        xorigin = width / 2;
-        yorigin = height / 2;
-    }
-    /**
-     * This constructor is ideal for centering the origin on your image
-     * @param tex - texture to show
-     * @param xpos - x position
-     * @param ypos - y position
-     * @param geoCenter - do you want to center the rotation origin in the center of the object?
-     */
-    public ImageBasedScreenObject(Texture tex, int xpos, int ypos, boolean geoCenter) {
-        this(tex, xpos, ypos,0,0,0,1,1,false,false);
-        if (geoCenter) {
-            centerOriginGeometrically();
-        }
-    }
-    public ImageBasedScreenObject(Texture tex, int xpos, int ypos, int xorigin, 
-	int yorigin, int rotation, int scaleX, int scaleY, 
-	boolean flipX, boolean flipY) {
+    public ImageBasedScreenObject(Texture tex, int xpos, int ypos, int xorigin, int yorigin, 
+    int rotation, int scaleX, int scaleY, boolean flipX, boolean flipY) {
         img = tex;
         width = img.getWidth();
         height = img.getHeight();
@@ -50,8 +43,76 @@ class ImageBasedScreenObject {
         setScaleY(scaleY);
         this.flipX = flipX;
         this.flipY = flipY;
+        initMovement();
     }
+    public void centerOrigin() {
+        xorigin = xpos + width/2;
+        yorigin = ypos + height/2;
+    }
+    public void initMovement() {
+        velocityVec = new Vector2(0,0);
+        accelerationVec = new Vector2(0,0);
+        acceleration = 0;
+        maxSpeed = 1000;
+        deceleration = 0;
+    }
+    public void setSpeed(float speed) {
+        //if length is 0, assume angle is zero
+        if (velocityVec.len() == 0) { 
+            velocityVec.set(speed,0);
+        } else {
+            velocityVec.setLength(speed);
+        }
+    }
+    public float getSpeed() {
+        return velocityVec.len();
+    }
+    public void setMotionAngle(float angle) {
+        velocityVec.setAngle(angle);
+    }
+    public float getMotionAngle() {
+        return velocityVec.angle();
+    }
+    public void setAcceleration(float acc) {
+        acceleration = acc;
+    }
+    public void accelerateAtAngle(float angle) {
+        accelerationVec.add(new 
+            Vector2(acceleration,0).setAngle(angle));
+    }
+    public void accelerateForward() {
+        accelerateAtAngle(getRotation());
+    }
+    public void setMaxSpeed(float ms) {
+        maxSpeed = ms;
+    }
+    public void setDeceleration(float dec) {
+        deceleration = dec;
+    }
+    public boolean isMoving() {
+        return (getSpeed() > 0);
+    }
+    public void applyPhysics(float dt) {
+        // apply acceleration
+        velocityVec.add(accelerationVec.x*dt, accelerationVec.y*dt);
+        float speed = getSpeed();
 
+        // decelerate when not accelerating
+        if (accelerationVec.len() == 0) {
+            speed -= deceleration * dt;
+        }
+
+        // keep speed within set bounds
+        speed = MathUtils.clamp(speed,0,maxSpeed);
+
+        // update velocity to match new speed
+        setSpeed(speed);
+
+        move(velocityVec.x*dt, velocityVec.y*dt);
+
+        // reset acceleration
+        accelerationVec.set(0,0);
+    }
     public Texture getImg() {
         return img;
     }
@@ -134,15 +195,15 @@ class ImageBasedScreenObject {
         scale(scaleX*amt,1f);
     }
     public void scaleHeight(float amt) {
-        scale(1f, scaleY*amt);
+        scale(1f,scaleY*amt);
     }
     public void rotate(float dAngle) {
         rotation += dAngle;
     }
-    public void flipX() {
+    public void flipAboutX() {
         flipX = !flipX;
     }
-    public void flipY() {
+    public void flipAboutY() {
         flipY = !flipY;
     }
     public boolean getFlipX() {
@@ -175,5 +236,10 @@ class ImageBasedScreenObject {
     public float getHeight() {
         return height;
     }
+    public int getDrawStartX() {
+        return 0;
+    }
+    public int getDrawStartY() {
+        return 0;
+    }
 }
-
