@@ -10,18 +10,21 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class ImageBasedScreenObjectBasicDemo extends ApplicationAdapter {
 	SpriteBatch batch;
-	ImageBasedScreenObject obj;
+	ImageBasedScreenObject obj, wall;
     ImageBasedScreenObjectDrawer artist;
  
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		Texture img = new Texture("badlogic.jpg");
-        obj = new ImageBasedScreenObject(img,0,0,true);
+		obj = new ImageBasedScreenObject(img,0,0,true);
 		obj.centerOriginGeometrically();
 		obj.setMaxSpeed(100);
 		obj.setAcceleration(400);
 		obj.setDeceleration(100);
+		wall = new ImageBasedScreenObject(img);
+		wall.setXPos(300);
+		wall.setYPos(0);
         artist = new ImageBasedScreenObjectDrawer(batch);
 	}
 	@Override
@@ -47,8 +50,12 @@ public class ImageBasedScreenObjectBasicDemo extends ApplicationAdapter {
 		if (obj.getSpeed() > 0) {
 			obj.setRotation(obj.getMotionAngle());
 		}
+		if (obj.overlaps(wall)) {
+			System.out.println("Bam!");
+		}
 		batch.begin();
 		artist.draw(obj);
+		artist.draw(wall);
 		batch.end();
 	}
 	

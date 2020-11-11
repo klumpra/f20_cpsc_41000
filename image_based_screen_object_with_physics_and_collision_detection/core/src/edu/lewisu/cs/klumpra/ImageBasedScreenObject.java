@@ -25,6 +25,7 @@ public class ImageBasedScreenObject {
     protected float acceleration;
     protected float maxSpeed;
     protected float deceleration;
+    protected Polygon boundingPolygon;
 
     public ImageBasedScreenObject(Texture tex) {
         this(tex,0,0,0,0,0,1,1,false,false);
@@ -62,6 +63,38 @@ public class ImageBasedScreenObject {
         this.flipX = flipX;
         this.flipY = flipY;
         initMovement();
+        initBoundingPolygon();
+    }
+    // depending on your actual ImageBasedScreenObject (and note that
+    // you will probably come up with descendants of ImageBasedScreenObject)
+    // you will want to override this function to customize the bounding
+    // polygon.
+    public void initBoundingPolygon() {
+        float[] vertices = new float[8];
+        vertices[0] = xpos;
+        vertices[1] = ypos;
+        vertices[2] = xpos + width;
+        vertices[3] = ypos;
+        vertices[4] = vertices[2];
+        vertices[5] = ypos + height;
+        vertices[6] = xpos;
+        vertices[7] = vertices[5];
+        boundingPolygon = new Polygon(vertices);
+    }
+    // return the bounding polygon as updated by the same translation
+    // rotation, and scaling that were applied to the object.
+    public Polygon getBoundingPolygon() {
+        boundingPolygon.setPosition(xpos,ypos);
+        boundingPolygon.setOrigin(xorigin,yorigin);
+        boundingPolygon.setRotation(rotation);
+        boundingPolygon.setScale(scaleX,scaleY);
+        return boundingPolygon;
+    }
+    // this enables us to do the collision detection
+    public boolean overlaps(ImageBasedScreenObject other) {
+        Polygon p1 = getBoundingPolygon();
+        Polygon p2 = other.getBoundingPolygon();
+        return Intersector.overlapConvexPolygons(p1,p2);
     }
     public void initMovement() {
         velocityVec = new Vector2(0,0);
