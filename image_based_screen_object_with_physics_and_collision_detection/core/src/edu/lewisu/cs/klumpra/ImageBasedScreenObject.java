@@ -69,20 +69,23 @@ public class ImageBasedScreenObject {
     // you will probably come up with descendants of ImageBasedScreenObject)
     // you will want to override this function to customize the bounding
     // polygon.
+    // these vertices are with respect to the model.
     public void initBoundingPolygon() {
         float[] vertices = new float[8];
-        vertices[0] = xpos;
-        vertices[1] = ypos;
-        vertices[2] = xpos + width;
-        vertices[3] = ypos;
+        vertices[0] = 0;
+        vertices[1] = 0;
+        vertices[2] = width;
+        vertices[3] = 0;
         vertices[4] = vertices[2];
-        vertices[5] = ypos + height;
-        vertices[6] = xpos;
+        vertices[5] = height;
+        vertices[6] = 0;
         vertices[7] = vertices[5];
         boundingPolygon = new Polygon(vertices);
     }
     // return the bounding polygon as updated by the same translation
     // rotation, and scaling that were applied to the object.
+    // transforms the bounding polygon's coordinates from model 
+    // to world coordinates
     public Polygon getBoundingPolygon() {
         boundingPolygon.setPosition(xpos,ypos);
         boundingPolygon.setOrigin(xorigin,yorigin);
@@ -94,7 +97,47 @@ public class ImageBasedScreenObject {
     public boolean overlaps(ImageBasedScreenObject other) {
         Polygon p1 = getBoundingPolygon();
         Polygon p2 = other.getBoundingPolygon();
+        // to save some computation with more complicated bounding
+        // polygons, test the rectangles first to see if we can avoid
+        // that calculation.
+        if (!p1.getBoundingRectangle().overlaps(
+        p2.getBoundingRectangle())) {
+            return false;
+        }
         return Intersector.overlapConvexPolygons(p1,p2);
+    }
+    //this function helps us back of a collision
+    public Vector2 preventOverlap(ImageBasedScreenObject other) {
+        Polygon p1 = getBoundingPolygon();
+        Polygon p2 = other.getBoundingPolygon();
+        MinimumTranslationVector mtv = new MinimumTranslationVector();
+        boolean polygonOverlap = 
+            Intersector.overlapConvexPolygons(p1, p2, mtv);
+        if (!polygonOverlap) {
+            return null;  // no need to move to clear the overlap
+        }
+        move(mtv.normal.x*mtv.depth, mtv.normal.y*mtv.depth);
+        return mtv.normal;  // return the rebound direction.
+    }
+    /*
+        In collisions, two obstacles run into each other.
+        Those obstacles had momentum.
+        p = momentum = mass of the object * its velocity
+        In a perfectly elastic collision, the objects' momentum does
+        not change because of all the energy remains as kinetic energy
+        - energy associated with the objects' velocity.
+        Real collisions are inelastic.
+    */
+    /** 
+     * Adjust the acceleration to simulate a force that moves us
+     * back from an obstacle
+     * @param angle - direction we should rebound in
+     * @param elasticity - how imperfect was the collision
+     */
+    public void rebound(float angle, float elasticity) {
+        accelerationVec.add(
+            new Vector2(
+                (int)(getSpeed()*elasticity*acceleration),0).setAngle(angle));
     }
     public void initMovement() {
         velocityVec = new Vector2(0,0);

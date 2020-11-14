@@ -1,30 +1,34 @@
 package edu.lewisu.cs.klumpra;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 public class ImageBasedScreenObjectBasicDemo extends ApplicationAdapter {
 	SpriteBatch batch;
-	ImageBasedScreenObject obj, wall;
-    ImageBasedScreenObjectDrawer artist;
+	ImageBasedScreenObject obj;
+	ImageBasedScreenObjectDrawer artist;
+	ArrayList<ImageBasedScreenObject> walls;
  
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
 		Texture img = new Texture("badlogic.jpg");
-		obj = new ImageBasedScreenObject(img,0,0,true);
+		obj = new ImageBasedScreenObject(img,150,0,true);
 		obj.centerOriginGeometrically();
 		obj.setMaxSpeed(100);
 		obj.setAcceleration(400);
 		obj.setDeceleration(100);
-		wall = new ImageBasedScreenObject(img);
-		wall.setXPos(300);
-		wall.setYPos(0);
+		walls = new ArrayList<ImageBasedScreenObject>();
+		Texture wallTex = new Texture("wall.png");
+		walls.add(new ImageBasedScreenObject(wallTex,0,0,true));
+		walls.add(new ImageBasedScreenObject(wallTex,500,0,true));
         artist = new ImageBasedScreenObjectDrawer(batch);
 	}
 	@Override
@@ -50,12 +54,19 @@ public class ImageBasedScreenObjectBasicDemo extends ApplicationAdapter {
 		if (obj.getSpeed() > 0) {
 			obj.setRotation(obj.getMotionAngle());
 		}
-		if (obj.overlaps(wall)) {
-			System.out.println("Bam!");
+		Vector2 bounce;
+		for (ImageBasedScreenObject wall : walls) {
+			if (obj.overlaps(wall)) {
+				bounce = obj.preventOverlap(wall);
+				obj.rebound(bounce.angle(),1f);
+				System.out.println("Bam!");
+			}
 		}
 		batch.begin();
 		artist.draw(obj);
-		artist.draw(wall);
+		for (ImageBasedScreenObject wall : walls) {
+			artist.draw(wall);
+		}
 		batch.end();
 	}
 	
