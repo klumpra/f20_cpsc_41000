@@ -10,21 +10,39 @@ public class ImageBasedScreenObject {
     protected float ypos;
     protected float xorigin;
     protected float yorigin;
-    protected float width;
-    protected float height;
     protected float rotation;
     protected float scaleX;
     protected float scaleY;
     protected boolean flipX;
     protected boolean flipY;
     protected Polygon boundingPolygon;
+    protected AnimationParameters animationParameters;
+
+    public void setAnimationParameters() {
+        animationParameters = new AnimationParameters(getWidth(), getHeight(), null, 0);
+    }
+        
+    /**
+     * Establishes how descendant classes will carve up a spritesheet
+     * to simulate animation
+     * @param frameWidth
+     * @param frameHeight
+     * @param frameSequence
+     * @param delay
+     */
+    public void setAnimationParameters(float frameWidth, float frameHeight, 
+    int[] frameSequence, float delay) {
+        animationParameters = new AnimationParameters(frameWidth, frameHeight, frameSequence, delay);
+        initBoundingPolygon();
+        centerOriginGeometrically();
+    }
 
     public ImageBasedScreenObject(Texture tex) {
         this(tex,0,0,0,0,0,1,1,false,false);
     }
     public void centerOriginGeometrically() {
-        xorigin = width / 2;
-        yorigin = height / 2;
+        xorigin = getWidth() / 2;
+        yorigin = getHeight() / 2;
     }
     /**
      * This constructor is ideal for centering the origin on your image
@@ -43,8 +61,6 @@ public class ImageBasedScreenObject {
     int yorigin, int rotation, int scaleX, int scaleY, 
     boolean flipX, boolean flipY) {
         img = tex;
-        width = img.getWidth();
-        height = img.getHeight();
         setXPos(xpos);
         setYPos(ypos);
         setXOrigin(xorigin);
@@ -55,6 +71,7 @@ public class ImageBasedScreenObject {
         this.flipX = flipX;
         this.flipY = flipY;
         initBoundingPolygon();
+        setAnimationParameters();
     }
     // depending on your actual ImageBasedScreenObject (and note that
     // you will probably come up with descendants of ImageBasedScreenObject)
@@ -65,10 +82,10 @@ public class ImageBasedScreenObject {
         float[] vertices = new float[8];
         vertices[0] = 0;
         vertices[1] = 0;
-        vertices[2] = width;
+        vertices[2] = getWidth();
         vertices[3] = 0;
         vertices[4] = vertices[2];
-        vertices[5] = height;
+        vertices[5] = getHeight();
         vertices[6] = 0;
         vertices[7] = vertices[5];
         boundingPolygon = new Polygon(vertices);
@@ -183,10 +200,16 @@ public class ImageBasedScreenObject {
     public float getYOrigin() {
         return yorigin;
     }
+    public int getDrawStartX() {
+        return animationParameters.getDrawStartX();
+    }
+    public int getDrawStartY() {
+        return animationParameters.getDrawStartY();
+    }
     public float getWidth() {
-        return width;
+        return img.getWidth();
     }
     public float getHeight() {
-        return height;
+        return img.getHeight();
     }
 }

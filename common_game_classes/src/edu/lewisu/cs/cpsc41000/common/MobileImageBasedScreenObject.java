@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
-public class MobileImageBasedScreenObject extends ImageBasedScreenObject {
+public class MobileImageBasedScreenObject extends AnimatedImageBasedScreenObject {
     protected Vector2 velocityVec;
     protected Vector2 accelerationVec;
     protected float acceleration;
@@ -15,18 +15,19 @@ public class MobileImageBasedScreenObject extends ImageBasedScreenObject {
     protected float deceleration;
 
     public MobileImageBasedScreenObject(Texture tex) {
-        this(tex,0,0,0,0,0,1,1,false,false);
+        this(tex,0,0,0,0,0,1,1,false,false,0,0,null,0);
     }
     public MobileImageBasedScreenObject(Texture tex, int xpos, int ypos, boolean geoCenter) {
-        this(tex, xpos, ypos,0,0,0,1,1,false,false);
+        this(tex, xpos, ypos,0,0,0,1,1,false,false,0,0,null,0);
         if (geoCenter) {
             centerOriginGeometrically();
         }
     }
     public MobileImageBasedScreenObject(Texture tex, int xpos, int ypos, int xorigin, 
-    int yorigin, int rotation, int scaleX, int scaleY, 
-    boolean flipX, boolean flipY) {
-        super(tex,xpos,ypos,xorigin,yorigin,rotation,scaleX,scaleY,flipX,flipY);
+    int yorigin, int rotation, int scaleX, int scaleY, boolean flipX, boolean flipY,
+    float frameWidth, float frameHeight, int[] frameSequence, float animDelay) {
+        super(tex,xpos,ypos,xorigin,yorigin,rotation,scaleX,scaleY,flipX,flipY,
+        frameWidth,frameHeight,frameSequence,animDelay);
         initMovement();
     }
     public void initMovement() {
@@ -128,6 +129,12 @@ public class MobileImageBasedScreenObject extends ImageBasedScreenObject {
         setSpeed(speed);
 
         move(velocityVec.x*dt, velocityVec.y*dt);
+
+        if (isMoving()) {
+            animate(dt);
+        } else {
+            resetAnimation();
+        }
 
         // reset acceleration
         accelerationVec.set(0,0);

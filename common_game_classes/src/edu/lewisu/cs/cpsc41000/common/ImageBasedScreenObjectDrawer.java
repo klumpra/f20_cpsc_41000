@@ -11,7 +11,7 @@ public class ImageBasedScreenObjectDrawer {
         batch.draw(obj.getImg(), obj.getXPos(), obj.getYPos(), 
         obj.getXOrigin(), obj.getYOrigin(), 
         obj.getWidth(), obj.getHeight(), obj.getScaleX(), obj.getScaleY(), obj.getRotation(),
-        0,0,(int)(obj.getWidth()),(int)(obj.getHeight()), obj.getFlipX(), obj.getFlipY());
+        obj.getDrawStartX(),obj.getDrawStartY(),(int)(obj.getWidth()),(int)(obj.getHeight()), obj.getFlipX(), obj.getFlipY());
     }
 }
 

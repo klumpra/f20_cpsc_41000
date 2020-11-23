@@ -32,9 +32,13 @@ public class DemoCommonClasses extends ApplicationAdapter {
         cam.update();
         batch = new SpriteBatch();
         batch.setProjectionMatrix(cam.combined);
-		img = new Texture("badlogic.jpg");
+//		img = new Texture("runningcat.png");
+        img = new Texture("badlogic.jpg");
 		background = new Texture("background.png");
-		obj = new MobileImageBasedScreenObject(img, 0, 0, true);
+        obj = new MobileImageBasedScreenObject(img, 0, 0, true);
+//        int[] fseq = {0,0,0,1,0,2,0,3};
+//        obj.setAnimationParameters(500,240,fseq,0.1f);
+        obj.setMaxSpeed(100);
 		obj.setAcceleration(400);
 		obj.setDeceleration(400);
         artist = new ImageBasedScreenObjectDrawer(batch);				
