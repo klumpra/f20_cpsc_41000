@@ -11,16 +11,25 @@ import com.badlogic.gdx.audio.Sound;
  */
 public class SoundLabel extends ActionLabel {
 	private Sound sound;
+	private boolean playing;
 	public SoundLabel(String text, int xpos, int ypos, String fontPath, String soundPath) {
 		super(text,xpos,ypos,fontPath);
 		sound = Gdx.audio.newSound(Gdx.files.internal(soundPath));
+		playing = false;
 	}
 	@Override
 	public void act() {
 		playSound();
 	}
 	public void playSound() {
-		sound.play();
+		if (!playing) {
+			sound.play();
+		}
+		playing = true;
+	}
+	public void stopSound() {
+		sound.stop();
+		playing = false;
 	}
 	public void playSound(float vol) {
 		sound.play(vol);

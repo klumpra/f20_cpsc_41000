@@ -44,7 +44,7 @@ public class MobileImageBasedScreenObject extends AnimatedImageBasedScreenObject
         setDeceleration(dec);
     }
     //this function helps us back of a collision
-    public Vector2 preventOverlap(ImageBasedScreenObject other) {
+    public Vector2 preventOverlap(Collidable other) {
         Polygon p1 = getBoundingPolygon();
         Polygon p2 = other.getBoundingPolygon();
         MinimumTranslationVector mtv = new MinimumTranslationVector();

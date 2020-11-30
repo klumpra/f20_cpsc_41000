@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 
-public class ImageBasedScreenObject {
+public class ImageBasedScreenObject implements Collidable {
     protected Texture img;
     protected float xpos;
     protected float ypos;
@@ -94,6 +94,7 @@ public class ImageBasedScreenObject {
     // rotation, and scaling that were applied to the object.
     // transforms the bounding polygon's coordinates from model 
     // to world coordinates
+    @Override
     public Polygon getBoundingPolygon() {
         boundingPolygon.setPosition(xpos,ypos);
         boundingPolygon.setOrigin(xorigin,yorigin);
@@ -102,7 +103,7 @@ public class ImageBasedScreenObject {
         return boundingPolygon;
     }
     // this enables us to do the collision detection
-    public boolean overlaps(ImageBasedScreenObject other) {
+    public boolean overlaps(Collidable other) {
         Polygon p1 = getBoundingPolygon();
         Polygon p2 = other.getBoundingPolygon();
         // to save some computation with more complicated bounding

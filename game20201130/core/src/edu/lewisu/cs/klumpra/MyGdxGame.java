@@ -75,6 +75,17 @@ public class MyGdxGame extends ApplicationAdapter {
 		if (obj.getSpeed() > 0) {
 			obj.setRotation(obj.getMotionAngle());
 		}
+		if (Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
+			if (label.wasClicked(Gdx.input.getX(),HEIGHT-Gdx.input.getY())) {
+				label.stopSound();
+				label.playSound();
+			}
+		}
+		if (obj.overlaps(label)) {
+			label.playSound();
+		} else {
+			label.stopSound();
+		}
 		Vector2 bounce;
 		for (ImageBasedScreenObject wall : walls) {
 			if (obj.overlaps(wall)) {
