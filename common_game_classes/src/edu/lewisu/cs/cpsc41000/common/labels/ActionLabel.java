@@ -17,7 +17,7 @@ import edu.lewisu.cs.cpsc41000.common.Collidable;
  * @author klumpra
  *
  */
-public abstract class ActionLabel implements Collidable {
+public class ActionLabel implements Collidable {
 	private Label label;
 	/**
 	 * This creates the action label
@@ -50,7 +50,7 @@ public abstract class ActionLabel implements Collidable {
 	 * when wasClicked returns true, typically the game will call this
 	 * act function
 	 */
-	public abstract void act();
+	public void act() { }
 
 	public void draw(SpriteBatch batch, float alpha) {
 		label.draw(batch,alpha);
