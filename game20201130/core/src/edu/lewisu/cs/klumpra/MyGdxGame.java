@@ -19,20 +19,23 @@ import edu.lewisu.cs.cpsc41000.common.ImageBasedScreenObjectDrawer;
 import edu.lewisu.cs.cpsc41000.common.MobileImageBasedScreenObject;
 import edu.lewisu.cs.cpsc41000.common.labels.ActionLabel;
 import edu.lewisu.cs.cpsc41000.common.labels.SoundLabel;
+import edu.lewisu.cs.cpsc41000.common.motioncontrollers.Tracker;
 
 public class MyGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
-	MobileImageBasedScreenObject obj;
+	MobileImageBasedScreenObject obj,chaser;
 	ImageBasedScreenObjectDrawer artist;
 	ArrayList<ImageBasedScreenObject> walls;
 	EdgeHandler edgy;
-	OrthographicCamera cam;
+	OrthographicCamera cam, titleCam;
 	float WIDTH, HEIGHT;
 	SoundLabel label;
 	int scene;  // 0 - title screen, 1 - game screen
 	ActionLabel title;  // will appear on the title screen
 	ArrayList<Boundary> boundaries;
 	Texture background;
+	Tracker tracker;
+	boolean trackingActive;
  
 	@Override
 	public void create () {
@@ -45,6 +48,10 @@ public class MyGdxGame extends ApplicationAdapter {
 		obj.setMaxSpeed(100);
 		obj.setAcceleration(400);
 		obj.setDeceleration(100);
+		chaser = new MobileImageBasedScreenObject(img,100,300,true);
+		chaser.setMaxSpeed(50);
+		chaser.setAcceleration(300);
+		chaser.setDeceleration(400);
 		boundaries = new ArrayList<Boundary>();
 		boundaries.add(new Boundary(269,0,279,333));
 		boundaries.add(new Boundary(460,0,470,333));
@@ -62,6 +69,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		cam = new OrthographicCamera(WIDTH,HEIGHT);
 		cam.translate(WIDTH/2,HEIGHT/2);
 		cam.update();
+		titleCam = new OrthographicCamera(WIDTH,HEIGHT);
+		titleCam.translate(WIDTH/2,HEIGHT/2);
+		titleCam.update();
 		batch.setProjectionMatrix(cam.combined);
 		edgy = new EdgeHandler(obj,cam,batch,-300,1200,-300,1200,0,
 		EdgeHandler.EdgeConstants.PAN,
@@ -69,6 +79,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		scene = 0; // start on the title scene
 		label = new SoundLabel("hey", 200, 400, "fonts/arial.fnt", "audio/heartbeat.wav");
 		title = new ActionLabel("This is the title", 200, 400,"fonts/arial.fnt");
+		tracker = new Tracker(chaser,obj,0.5f);
+		trackingActive = false;
 	}
 	public void renderMainScene() {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
@@ -79,6 +91,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
 			scene = 0;
 			return;
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.T)) {
+			trackingActive = !trackingActive;
 		}
 		if (Gdx.input.isKeyPressed(Keys.D)) {
 			obj.accelerateAtAngle(0);
@@ -95,6 +110,15 @@ public class MyGdxGame extends ApplicationAdapter {
 		obj.applyPhysics(dt);
 		if (obj.getSpeed() > 0) {
 			obj.setRotation(obj.getMotionAngle()-90f);
+		}
+		if (trackingActive) {
+			tracker.track(dt); // applies physics to the chaser
+			if (chaser.getSpeed() > 0) {
+				chaser.setRotation(chaser.getMotionAngle()-90f);
+			}
+		}
+		if (chaser.overlaps(obj)) {
+			System.out.println("Collision");
 		}
 		if (Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
 			if (label.wasClicked(Gdx.input.getX(),HEIGHT-Gdx.input.getY())) {
@@ -122,12 +146,23 @@ public class MyGdxGame extends ApplicationAdapter {
 				bounce = obj.preventOverlap(b);
 				obj.rebound(bounce.angle(),1f);
 			}
+			if (chaser.overlaps(b)) {
+				bounce = chaser.preventOverlap(b);
+				chaser.move(10*bounce.x,10*bounce.y);
+//				chaser.rebound(bounce.angle(),1f);
+				tracker.avoid(b.getParallel(),dt);
+				if (chaser.getSpeed() > 0) {
+					chaser.setRotation(chaser.getMotionAngle()-90f);
+				}	
+			}
 		}
 
 		edgy.enforceEdges();
+		batch.setProjectionMatrix(cam.combined); // game scene camera
 		batch.begin();
 		batch.draw(background,-600,0);
 		artist.draw(obj);
+		artist.draw(chaser);
 /*		for (ImageBasedScreenObject wall : walls) {
 			artist.draw(wall);
 		}
@@ -141,6 +176,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
 			scene = 1;
 		} else {
+			batch.setProjectionMatrix(titleCam.combined);
 			batch.begin();
 			title.draw(batch,1f);
 			batch.end();
