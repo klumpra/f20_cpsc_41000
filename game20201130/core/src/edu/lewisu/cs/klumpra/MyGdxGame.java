@@ -149,7 +149,6 @@ public class MyGdxGame extends ApplicationAdapter {
 			if (chaser.overlaps(b)) {
 				bounce = chaser.preventOverlap(b);
 				chaser.move(10*bounce.x,10*bounce.y);
-//				chaser.rebound(bounce.angle(),1f);
 				tracker.avoid(b.getParallel(),dt);
 				if (chaser.getSpeed() > 0) {
 					chaser.setRotation(chaser.getMotionAngle()-90f);

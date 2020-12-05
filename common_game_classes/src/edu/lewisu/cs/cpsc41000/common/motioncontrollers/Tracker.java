@@ -14,12 +14,10 @@ import edu.lewisu.cs.cpsc41000.common.MobileImageBasedScreenObject;
 public class Tracker {
     private MobileImageBasedScreenObject chaser;
     private ImageBasedScreenObject target;
-    private Vector2 preferred;
     private float accuracy;  // how accurate the tracking is. 1 means perfect
     public Tracker() {
         chaser = null;
         target = null;
-        preferred = null;
         accuracy = 1f;
     }
     public Tracker(MobileImageBasedScreenObject chaser,
@@ -57,14 +55,11 @@ public class Tracker {
     public void setTarget(ImageBasedScreenObject target) {
         this.target = target;
     }
-    public void setPreferred(Vector2 vec) {
-        preferred = vec;
-    }
     public float getFudgeFactor() {
         if (accuracy == 1) {
             return 1f;
         } else {
-            return MathUtils.random(accuracy);
+            return MathUtils.random(accuracy,2f-accuracy);
         }
     }
     /**
@@ -74,14 +69,10 @@ public class Tracker {
      * @param dt
      */
     public void track(float dt) {
-        if (preferred != null) {
-            chaser.accelerateAtAngle(preferred.angle());
-        } else {
-            float diffX = target.getXPos() - chaser.getXPos();
-            float diffY = target.getYPos() - chaser.getYPos();
-            float ang = MathUtils.atan2(getFudgeFactor()*diffY,getFudgeFactor()*diffX) * MathUtils.radiansToDegrees;
-            chaser.accelerateAtAngle(ang);
-        }
+        float diffX = target.getXPos() - chaser.getXPos();
+        float diffY = target.getYPos() - chaser.getYPos();
+        float ang = MathUtils.atan2(getFudgeFactor()*diffY,getFudgeFactor()*diffX) * MathUtils.radiansToDegrees;
+        chaser.accelerateAtAngle(ang);
         chaser.applyPhysics(dt);
     }
 
@@ -97,7 +88,6 @@ public class Tracker {
         } else {
             diffY = target.getYPos() - chaser.getYPos();
             if (diffY < 0) {
-                System.out.println(dir.angle());
                 chaser.accelerateAtAngle(-dir.angle());
             } else {
                 chaser.accelerateAtAngle(dir.angle());
