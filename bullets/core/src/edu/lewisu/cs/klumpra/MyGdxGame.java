@@ -108,6 +108,12 @@ public class MyGdxGame extends ApplicationAdapter {
 		if (Gdx.input.isKeyJustPressed(Keys.T)) {
 			trackingActive = !trackingActive;
 		}
+		if (Gdx.input.isKeyJustPressed(Keys.H)) {
+			obj.setVisible(false);
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.U)) {
+			obj.setVisible(true);
+		}
 		if (Gdx.input.isKeyPressed(Keys.D)) {
 			obj.startDiscreteAnimation();
 			obj.accelerateAtAngle(0);

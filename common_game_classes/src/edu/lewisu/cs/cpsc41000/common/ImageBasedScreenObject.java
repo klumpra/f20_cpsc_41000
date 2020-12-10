@@ -16,6 +16,7 @@ public class ImageBasedScreenObject implements Collidable {
     protected boolean flipX;
     protected boolean flipY;
     protected Polygon boundingPolygon;
+    protected boolean visible;
     protected AnimationParameters animationParameters;
 
     public void setAnimationParameters() {
@@ -72,6 +73,7 @@ public class ImageBasedScreenObject implements Collidable {
         this.flipY = flipY;
         initBoundingPolygon();
         setAnimationParameters();
+        visible = true;
     }
     // depending on your actual ImageBasedScreenObject (and note that
     // you will probably come up with descendants of ImageBasedScreenObject)
@@ -212,5 +214,17 @@ public class ImageBasedScreenObject implements Collidable {
     }
     public float getHeight() {
         return img.getHeight();
+    }
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+    public boolean isVisible() {
+        return (visible == true);
+    }
+    public void show() {
+        visible = true;
+    }
+    public void hide() {
+        visible = false;
     }
 }
