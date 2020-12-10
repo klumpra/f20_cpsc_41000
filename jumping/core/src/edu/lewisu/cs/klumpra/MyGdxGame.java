@@ -40,7 +40,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		Texture img = new Texture("badlogic.jpg");
 		obj = new PlatformCharacter(img,150,0,false);
-		obj.setMaxSpeed(100);
+		obj.setMaxSpeed(400);
 		obj.setAcceleration(400);
 		obj.setDeceleration(400);
 
@@ -105,7 +105,7 @@ public class MyGdxGame extends ApplicationAdapter {
 			if (obj.overlaps(wall)) {
 				bounce = obj.preventOverlap(wall);
 				if (bounce != null) {
-					obj.rebound(bounce.angle(),1f);
+					obj.rebound(bounce.angle(),0.25f);
 					System.out.println("Bam!");
 				}
 			}

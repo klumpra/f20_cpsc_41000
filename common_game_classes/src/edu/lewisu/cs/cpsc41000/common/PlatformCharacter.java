@@ -80,6 +80,7 @@ public class PlatformCharacter extends MobileImageBasedScreenObject {
         setPlatforms(platforms);
     }
     public void jump() {
+        moveUp(100);
         velocityVec.y = jumpSpeed;
     }
     public boolean onSolid() {

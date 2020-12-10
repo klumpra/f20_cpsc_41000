@@ -42,7 +42,11 @@ public class AnimatedImageBasedScreenObject extends ImageBasedScreenObject {
             return super.getHeight();  // on the width of the image
         }
     }
+    public void setAnimationActive(boolean active) {
+        animationParameters.setActive(active);
+    }
     public void resetAnimation() {
+        setAnimationActive(false);
         animationParameters.setCurrentFrame(0);  // at the end of a run
     }
     public void animate(float dt) {
@@ -50,5 +54,13 @@ public class AnimatedImageBasedScreenObject extends ImageBasedScreenObject {
         if (animationParameters.timeToChange()) {
             animationParameters.changeFrame();
         }
+    }
+    public void setDiscreteAnimation(boolean disc) {
+        animationParameters.setDiscrete(disc);
+        animationParameters.setActive(false);
+    }
+    public void startDiscreteAnimation() {
+        resetAnimation();
+        setAnimationActive(true);
     }
 }

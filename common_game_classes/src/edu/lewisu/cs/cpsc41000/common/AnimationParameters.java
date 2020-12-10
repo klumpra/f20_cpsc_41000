@@ -7,6 +7,20 @@ public class AnimationParameters {
     private int[] frameSequence;
     private float timeSince;
     private float delay; 
+    private boolean discrete; // should this be played all at once?
+    private boolean active;
+    public boolean getDiscrete() {
+        return discrete;
+    }
+    public boolean isActive() {
+        return active;
+    }
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+    public void setDiscrete(boolean discrete) {
+        this.discrete = discrete;
+    }
 
     public float getFrameWidth() {
         return frameWidth;
@@ -33,7 +47,15 @@ public class AnimationParameters {
     }
     public void setCurrentFrame(int currentFrame) {
         if (frameSequence != null) {
-            this.currentFrame = currentFrame % (frameSequence.length/2);
+            if (discrete && isActive()) {
+                if (currentFrame < frameSequence.length/2) {
+                    this.currentFrame = currentFrame;
+                } else {
+                    active = false;
+                }
+            } else {
+                this.currentFrame = currentFrame % (frameSequence.length/2);
+            }
         } else {
             this.currentFrame = 0;
         }
@@ -63,6 +85,7 @@ public class AnimationParameters {
         frameSequence = null;
         timeSince = 0;
         delay = 0.1f;
+        discrete = false;
     }
     public AnimationParameters(float frameWidth, float frameHeight, int[] frameSequence, float delay) {
         setFrameWidth(frameWidth);
@@ -70,6 +93,7 @@ public class AnimationParameters {
         setCurrentFrame(0);
         setFrameSequence(frameSequence);
         setDelay(delay);
+        discrete = false;
         timeSince = 0;
     }
     // this function is what actually accomplishes the animation

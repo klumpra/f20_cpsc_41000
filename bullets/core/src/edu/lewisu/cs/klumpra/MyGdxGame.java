@@ -47,6 +47,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		obj = new MobileImageBasedScreenObject(img,150,0,false);
 		int[] fseq = {0,0,0,1,0,2,0,3};
 		obj.setAnimationParameters(500, 240, fseq, 0.1f);
+		obj.setDiscreteAnimation(true);
 		obj.setMaxSpeed(100);
 		obj.setAcceleration(400);
 		obj.setDeceleration(400);
@@ -108,6 +109,7 @@ public class MyGdxGame extends ApplicationAdapter {
 			trackingActive = !trackingActive;
 		}
 		if (Gdx.input.isKeyPressed(Keys.D)) {
+			obj.startDiscreteAnimation();
 			obj.accelerateAtAngle(0);
 		}
 		if (Gdx.input.isKeyPressed(Keys.A)) {
